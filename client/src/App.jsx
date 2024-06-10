@@ -1,33 +1,72 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+
+import { useState, useEffect } from 'react'
+import Header from './components/Header'
+import { Route, Outlet, Routes, Navigate  } from 'react-router-dom';
+import { Container, Row, Alert } from 'react-bootstrap';
+import LoginForm from './components/LoginForm';
+import API from './API';
+import GamePage from './components/GameComponents';
+import NotFound from './components/NotFound';
+import WelcomePage from './components/WelcomePage';
+import PreviousGames from './components/PreviousGames';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
+  const [message, setMessage] = useState(null);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const user = await API.getUserInfo();
+      setLoggedIn(true);
+      setUser(user);
+    };
+    checkAuth();
+  }, []);
+
+  const handleLogin = async (credentials) => {
+    try {
+      const user = await API.logIn(credentials);
+      setLoggedIn(true);
+      setMessage({msg: `Welcome, ${user.username}!`, type: 'success'});
+      setUser(user);
+    }catch(err) {
+      setMessage({msg: err, type: 'danger'});
+    }
+  };
+  const handleLogout = async () => {
+    await API.logOut();
+    setLoggedIn(false);
+    // clean up everything
+    setMessage('');
+  };
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Routes>
+        <Route element={<>
+          <Container className='background-image d-flex vh-100 align-center align-items-center p-0 m-0' fluid>
+          <Header loggedIn={loggedIn} handleLogout={handleLogout} user={user}/>
+          <Container fluid className='mt-3 '>
+            {/*message && <Row>
+              <Alert variant={message.type} onClose={() => setMessage('')} dismissible>{message.msg}</Alert>
+            </Row> */}
+            <Outlet/>
+            
+          </Container>
+          </Container>
+          </>
+        }>
+          <Route path='/' element={<WelcomePage loggedIn={loggedIn} user={user}/>}/>
+          <Route path='/play' element={<GamePage loggedIn={loggedIn}/>}/>
+          <Route path='/login' element={loggedIn ? <Navigate replace to='/' /> :<LoginForm login={handleLogin}/>} />
+          <Route path='/games' element={<PreviousGames/>}/>
+          <Route path='*' element={<NotFound/>}/>
+        </Route> 
+      </Routes>
     </>
   )
 }
