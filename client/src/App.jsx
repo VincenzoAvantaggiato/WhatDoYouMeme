@@ -50,7 +50,7 @@ function App() {
         <Route element={<>
           <Container className='background-image d-flex vh-100 align-center align-items-center p-0 m-0' fluid>
           <Header loggedIn={loggedIn} handleLogout={handleLogout} user={user}/>
-          <Container fluid className='mt-3 '>
+          <Container fluid className='d-flex flex-column vh-100 m-0  justify-content-center'>
             {/*message && <Row>
               <Alert variant={message.type} onClose={() => setMessage('')} dismissible>{message.msg}</Alert>
             </Row> */}

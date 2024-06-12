@@ -66,7 +66,6 @@ function GamePage(props) {
                 updateScore(5);
             }
             else {
-
                 setWrong(wrong => wrong + 1);
             }
         }
@@ -106,10 +105,11 @@ function Recap(props){
             <h4><i className="bi bi-check-circle-fill fs-3 text-success"></i> Correct answers: {props.correct}</h4>
             <h4><i className="bi bi-x-circle-fill fs-3 text-danger"></i> Wrong answers: {props.wrong}</h4>
             <h2 className="d-flex justify-content-end"><i className="bi bi-award-fill fs-2 text-primary"></i> Final score: {props.score}</h2>
+            <br></br>
             <Row>
-                {props.loggedIn &&<Col className="d-flex justify-content-center align-items-center"><Link to='/games' className='btn btn-primary'>Previous games</Link></Col>}
-                <Col className="d-flex justify-content-center align-items-center"><Link to='/' className='btn btn-primary'>Home</Link></Col>
-                <Col className="d-flex justify-content-center align-items-center"><Link to='/play' className='btn btn-primary' onClick={()=>props.next()}>Play again</Link></Col>
+                <Col className="d-flex justify-content-center align-items-center"><Link to='/' className='btn btn-primary bi bi-house'> Home</Link></Col>
+                {props.loggedIn &&<Col className="d-flex justify-content-center align-items-center"><Link to='/games' className='btn btn-danger bi bi-controller '> Previous games</Link></Col>}
+                <Col className="d-flex justify-content-center align-items-center"><Link to='/play' className='btn btn-success bi bi-joystick' onClick={()=>props.next()}> Play again</Link></Col>
             </Row>
         </Container>
     )};
@@ -117,7 +117,7 @@ function Recap(props){
 function Round(props) {
     return(
         <>
-            <Row className="m-3">
+            <Row className="d-flex h-25 justify-content-start  align-items-end">
                 <Col className="d-flex justify-content-left">
                     {props.roundOver && !props.rightCaptions.includes(props.selectedAnswer) && <img src={Loser} alt="Loser" style={{overlay: 'true'}}/>}
                 </Col>
@@ -129,7 +129,7 @@ function Round(props) {
                     <h2 className="d-flex justify-content-end"><i className="bi bi-award-fill fs-2 text-primary"></i> Score: {props.score}</h2>
                 </Col>
             </Row>
-            <Row className="m-3">
+            <Row className="m-3 d-flex h-50 justify-content-center align-items-center">
                 <Col className="d-flex justify-content-center align-items-center">
                     <img src={props.image} alt="Meme" style={{maxWidth: '45vw', maxHeight: '40vh', height: 'auto', width: 'auto' }}/>
                 </Col>
@@ -143,10 +143,12 @@ function Round(props) {
                                                     disabled={props.roundOver} onClick={()=>props.submitAnswer(caption.id)}>{caption.text}</Button></Row>)}
                 </Col>
             </Row>
+            <Row className="h-25">
             {!props.roundOver && <Timer time={30} submitAnswer={props.submitAnswer} className='footer'/>}
             {props.roundOver && <Container className='d-flex flex-column align-items-center justify-content-center'>
                 <Button className="btn btn-primary" onClick={()=>props.next()}>Next Round</Button>
                 </Container>}
+            </Row>
         </>
     )
 }
@@ -163,7 +165,6 @@ function Timer(props) {
                     return prevTime - 1;
                 } else {
                     clearInterval(interval);
-                    props.submitAnswer(undefined);
                     return 0;
                 }
             });
@@ -178,6 +179,9 @@ function Timer(props) {
             g: Math.max(prevColor.g - increment/2, 0),
             b: Math.max(prevColor.b - increment/2, 0),
         }));
+        if (time===0) {
+            props.submitAnswer(undefined);
+        }
     }, [time]);
 
     return (
