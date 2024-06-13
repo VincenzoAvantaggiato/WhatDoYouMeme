@@ -122,7 +122,7 @@ app.delete('/api/sessions/current', (req, res) => {
 });
 
 app.post('/api/games',isLoggedIn, (req, res) => {
-  const game = new Game(-1,req.user.id, req.body.score, req.body.correct, req.body.wrong);
+  const game = new Game(-1,req.user.id, req.body.scores, req.body.images);
   gameDao.addGame(game).then(id => {
     res.status(201).json(id);
   }).catch(err => {

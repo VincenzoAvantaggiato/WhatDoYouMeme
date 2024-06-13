@@ -8,17 +8,14 @@ import {Game}  from "../../Meme.mjs";
 
 function GamePage(props) {
     const [round, setRound] = useState(0);
-    const [score, setScore] = useState(0);
     const [memes, setMemes] = useState([]);
     const [roundOver, setRoundOver] = useState(false);
     const [rightCaptions, setRightCaptions] = useState([]);
-    const [selectedAnswer, setSelectedAnswer] = useState(null);
-    const [correct, setCorrect] = useState(0);
-    const [wrong, setWrong] = useState(0);
-
+    const [selectedAnswers, setSelectedAnswers] = useState([null, null, null]);
+    const [scores, setScores] = useState([0,0,0]);
     const saveGame = async () => {
         try {
-            await API.createGame(new Game(-1,-1, score, correct, wrong));
+            await API.createGame(new Game(-1,-1, scores, memes.map(meme=>meme.image_path)));
         } catch (err) {
             console.error(err);
         }
@@ -35,7 +32,10 @@ function GamePage(props) {
         setRound(round=> round + 1);
         setRoundOver(false);
         setRightCaptions([]);
-        setSelectedAnswer(null);
+    }
+
+    const incrementScore = () => {
+        setScores(scores => scores.map((score, index) => index === round-1 ? score + 5 : score));
     }
 
     useEffect(() => {
@@ -45,28 +45,20 @@ function GamePage(props) {
         }
         if (round===0) {
             getMemes();
-            setScore(0);
-            setCorrect(0);
-            setWrong(0);
+            setScores([0,0,0]);
+            setSelectedAnswers([null, null, null]);
         }
     }, [round]);
     
-    const updateScore = (points) => {
-        setScore(score => score + points);
-    }
-    const submitAnswer = async (captionId) => {
+    const submitAnswer = async (caption) => {
         try {
             setRoundOver(true);
-            setSelectedAnswer(captionId);
+            setSelectedAnswers(selectedAnswers => selectedAnswers.map((answer, index) => index === round-1 ? caption : answer));
             const captions =await API.getRightCaptions(memes[round-1].id);
             const captionsId = captions.map(caption => caption.id);
             setRightCaptions(captionsId);
-            if (captionsId.includes(captionId)) {
-                setCorrect(correct => correct + 1);
-                updateScore(5);
-            }
-            else {
-                setWrong(wrong => wrong + 1);
+            if (captionsId.includes(caption.id)) {
+                incrementScore();
             }
         }
         catch (err) {
@@ -76,8 +68,8 @@ function GamePage(props) {
     return(
         <>
         {round === 0 ? <Instructions next={nextRound} loggedIn={props.loggedIn}/> : 
-         round ===-1 ? <Recap loggedIn={props.loggedIn} score={score} correct={correct} wrong={wrong} next={nextRound}></Recap>:
-                       <Round round={round} image={memes[round-1].image_path} captions={memes[round-1].captions} score={score} next={nextRound} roundOver={roundOver} submitAnswer={submitAnswer} rightCaptions={rightCaptions} selectedAnswer={selectedAnswer}/>}
+         round ===-1 ? <Recap loggedIn={props.loggedIn} scores={scores} next={nextRound} selectedAnswers={selectedAnswers} images={memes.map(meme=>meme.image_path)}></Recap>:
+                       <Round round={round} image={memes[round-1].image_path} captions={memes[round-1].captions} score={scores.reduce((a,b)=>a+b)} next={nextRound} roundOver={roundOver} submitAnswer={submitAnswer} rightCaptions={rightCaptions} selectedAnswer={selectedAnswers[round-1]}/>}
         </>
     )
 }
@@ -102,15 +94,29 @@ function Recap(props){
         <Container className='d-flex flex-column align-items-center justify-content-center'>
             <h1>Game Over</h1>
             <h4>Thank you for playing!</h4>
-            <h4><i className="bi bi-check-circle-fill fs-3 text-success"></i> Correct answers: {props.correct}</h4>
-            <h4><i className="bi bi-x-circle-fill fs-3 text-danger"></i> Wrong answers: {props.wrong}</h4>
-            <h2 className="d-flex justify-content-end"><i className="bi bi-award-fill fs-2 text-primary"></i> Final score: {props.score}</h2>
+            <h4><i className="bi bi-check-circle-fill fs-3 text-success"></i> Correct answers: {props.scores.filter(s=>s==5).length}</h4>
+            <h4><i className="bi bi-x-circle-fill fs-3 text-danger"></i> Wrong answers: {props.scores.filter(s=>s==0).length}</h4>
+            <h2 className="d-flex justify-content-end"><i className="bi bi-award-fill fs-2 text-primary"></i> Final score: {props.scores.reduce((a,b)=>a+b)}</h2>
+            
+            <br></br>
+            {props.scores.filter(s=>s==5).length>0 && <h4>Memes that you correctly guessed:</h4>}
+            <Row>
+                {props.loggedIn && props.scores.map((score, index) => {
+                    if (score==0) return;
+                    return <Col className="d-flex flex-column  align-items-center">
+                        
+                        <img src={props.images[index]} alt="Meme" style={{maxWidth: '15vw', maxHeight: '15vh', height: 'auto', width: 'auto' }}/>
+                        <p className="text-center">{props.selectedAnswers[index].text}</p>
+                    </Col>
+                })}
+            </Row>
             <br></br>
             <Row>
                 <Col className="d-flex justify-content-center align-items-center"><Link to='/' className='btn btn-primary bi bi-house'> Home</Link></Col>
                 {props.loggedIn &&<Col className="d-flex justify-content-center align-items-center"><Link to='/games' className='btn btn-danger bi bi-controller '> Previous games</Link></Col>}
                 <Col className="d-flex justify-content-center align-items-center"><Link to='/play' className='btn btn-success bi bi-joystick' onClick={()=>props.next()}> Play again</Link></Col>
             </Row>
+            
         </Container>
     )};
 
@@ -135,12 +141,12 @@ function Round(props) {
                 </Col>
                 <Col>
                     {props.captions.map(caption => <Row><Button key={caption.id} className={!props.roundOver?"btn-light border border-primary border-2 rounded m-2": 
-                                                                                            props.selectedAnswer===caption.id?
+                                                                                            props.selectedAnswer.id===caption.id?
                                                                                             props.rightCaptions.includes(caption.id)?"btn-success border border-success border-2 rounded m-2"
                                                                                                                                     :"btn-danger border border-danger border-2 rounded m-2"
                                                                                             :props.rightCaptions.includes(caption.id)?"btn-light border border-success border-2 rounded m-2"
                                                                                                                                     :"btn-light border border-danger border-2 rounded m-2"} 
-                                                    disabled={props.roundOver} onClick={()=>props.submitAnswer(caption.id)}>{caption.text}</Button></Row>)}
+                                                    disabled={props.roundOver} onClick={()=>props.submitAnswer(caption)}>{caption.text}</Button></Row>)}
                 </Col>
             </Row>
             <Row className="h-25">

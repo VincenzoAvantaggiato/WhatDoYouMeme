@@ -12,6 +12,26 @@ export const db = new sqlite.Database('memes.sqlite', (err) => {
 
 // populate image table
 db.serialize(() => {
+  db.run(`DELETE FROM images`, (err) => {
+    if (err) console.error('Error deleting from image table:', err);
+    else console.log('Image table deleted successfully');
+  });
+  db.run(`DELETE FROM captions`, (err) => {
+    if (err) console.error('Error deleting from caption table:', err);
+    else console.log('Caption table deleted successfully');
+  });
+  db.run(`DELETE FROM image_caption`, (err) => {
+    if (err) console.error('Error deleting from image_caption table:', err);
+    else console.log('Image_caption table deleted successfully');
+  });
+  db.run(`DELETE FROM users`, (err) => {
+    if (err) console.error('Error deleting from users table:', err);
+    else console.log('Users table deleted successfully');
+  });
+  db.run(`DELETE FROM games`, (err) => {
+    if (err) console.error('Error deleting from games table:', err);
+    else console.log('Games table deleted successfully');
+  });
 
   db.run(`INSERT INTO images (image_path) VALUES 
           ("images/meme1.jpg"),
@@ -23,23 +43,36 @@ db.serialize(() => {
           ("images/meme7.jpg"),
           ("images/meme8.jpg"),
           ("images/meme9.jpg"),
-          ("images/meme10.jpg")`, (err) => {
+          ("images/meme10.jpg"),
+          ("images/meme11.gif"),
+          ("images/meme12.jpg")`, (err) => {
     if (err) console.error('Error inserting into image table:', err);
     else console.log('Image table populated successfully');
   });
 
   // populate caption table
   db.run(`INSERT INTO captions (text) VALUES 
-          ("I am a caption"),
-          ("I am a caption too"),
-          ("I am a caption as well"),
-          ("I am a caption also"),
-          ("I am a caption"),
-          ("I am a caption too"),
-          ("I am a caption as well"),
-          ("I am a caption also"),
-          ("I am a caption"),
-          ("I am a caption too")`, (err) => {
+          ("Lezione alle 8:30"),
+          ("Esami a fine luglio"),
+          ("30L // My project"),
+          ("Your password // Hacked profile"),
+          ("Io durante la sessione"),
+          ("Io a Torino a Luglio // I miei amici al mare in Puglia"),
+          ("React+bootstrap // HTML+CSS"),
+          ("Ingegneria informatica // Ingegneria elettronica"),
+          ("Studiare durante tutto il semestre // Studiare 2 giorni prima dell'esame"),
+          ("Studiare per gli esami // Andare a mare"),
+          ("Io che aspetto i voti del secondo appello"),
+          ("Io che aspetto il mio amico che si doveva laureare quest'anno"),
+          ("C'è un modo per passare l'esame senza studiare"),
+          ("C'è un AI che fa i meme per te"),
+          ("Io che mi preparo a dare 4 esami in 10 giorni"),
+          ("Lezione a metà giugno senza aria condizionata"),
+          ("Studia durante tutto il semestre // Quel collega"),
+          ("Rifiuta un 18 // Quel collega"),
+          ("Average python fan // Average C enjoyer"),
+          ("Average front-end developer // Average back-end developer")
+          `, (err) => {
     if (err) console.error('Error inserting into caption table:', err);
     else console.log('Caption table populated successfully');
   });
@@ -56,26 +89,21 @@ db.serialize(() => {
           (4, 8),
           (5, 9),
           (5, 10),
-          (6, 1),
-          (6, 2),
-          (7, 3),
-          (7, 4),
-          (8, 5),
-          (8, 6),
-          (9, 7),
-          (9, 8),
-          (10, 9),
-          (10, 10),
-          (1, 3),
-          (2, 5),
-          (3, 7),
-          (4, 9),
-          (5, 2),
-          (6, 4),
-          (7, 6),
-          (8, 8),
-          (9, 10),
-          (10, 1)`, (err) => {
+          (6, 11),
+          (6, 12),
+          (7, 13),
+          (7, 14),
+          (8, 15),
+          (8, 16),
+          (9, 17),
+          (9, 18),
+          (10, 11),
+          (10, 12),
+          (11, 19),
+          (11, 20),
+          (12, 5),
+          (12,1)
+          `, (err) => {
     if (err) console.error('Error inserting into image_caption table:', err);
     else console.log('Image_caption table populated successfully');
   });
@@ -89,10 +117,10 @@ db.serialize(() => {
   });
 
   // populate games table
-  db.run(`INSERT INTO games (user_id, score, correct, wrong) VALUES 
+  /*db.run(`INSERT INTO games (user_id, score, correct, wrong) VALUES 
           (1, 10, 2, 1),
           (2, 15, 3, 0)`, (err) => {
     if (err) console.error('Error inserting into games table:', err);
     else console.log('Games table populated successfully');
-  });
+  });*/
 });

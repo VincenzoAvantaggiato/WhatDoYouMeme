@@ -12,10 +12,9 @@ export function Image(id, image_path, captions){
     this.image_path = image_path;
 }
 
-export function Game(id, user_id, score, correct, wrong){
+export function Game(id, user_id, scores, images){
     this.id = id;
     this.user_id = user_id;
-    this.score = score;
-    this.correct = correct;
-    this.wrong = wrong;
+    this.scores = scores;
+    this.images = images;
 }

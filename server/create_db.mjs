@@ -31,7 +31,7 @@ db.serialize(() => {
     if (err) console.error('Error creating users table:', err);
     else console.log('Users table created successfully');
   });
-  db.run('CREATE TABLE IF NOT EXISTS games (id INTEGER PRIMARY KEY, user_id INTEGER, score INTEGER, correct INTEGER, wrong INTEGER, FOREIGN KEY(user_id) REFERENCES users(id))', (err) => {
+  db.run('CREATE TABLE IF NOT EXISTS games (id INTEGER PRIMARY KEY, user_id INTEGER, score_round1 INTEGER, score_round2 INTEGER, score_round3 INTEGER, image_round1 TEXT, image_round2 TEXT, image_round3 TEXT, FOREIGN KEY(user_id) REFERENCES users(id))', (err) => {
     if (err) console.error('Error creating games table:', err);
     else console.log('Games table created successfully');
   });
