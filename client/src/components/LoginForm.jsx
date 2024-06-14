@@ -12,6 +12,7 @@ function LoginForm(props) {
         const credentials = { username, password };
         
         props.login(credentials);
+
     };
   
     return (
@@ -29,8 +30,8 @@ function LoginForm(props) {
                         <Form.Control type='password' value={password} onChange={ev => setPassword(ev.target.value)} required={true} minLength={6}/>
                     </Form.Group>
         
-                    <Button type='submit'>Login</Button>
-                    <Link className='btn btn-danger mx-2 my-2' to={'/'} >Cancel</Link>
+                    <Button type='submit' disabled={props.waiting}>Login</Button>
+                    <Link className={props.waiting? 'btn btn-danger mx-2 my-2 disabled' : 'btn btn-danger mx-2 my-2'} to={!props.waiting &&'/'} >Cancel</Link>
                 </Form>
             </Col>
             <Col/>

@@ -15,6 +15,7 @@ const app = new express();
 app.use(morgan('dev'));
 app.use(express.json());
 const port = 3001;
+const TIMEOUT = 0;
 
 const memeDao = new MemeDAO();
 const userDao = new UserDAO();
@@ -62,82 +63,96 @@ app.use(passport.authenticate('session'));
 
 // define routes
 app.get('/api/memes/random', (req, res) => {
-  if (req.isAuthenticated()) {
-    memeDao.getRandomMeme(3).then(memes => {
-      res.json(memes);
-    }).catch(err => {
-      console.error(err);
-      res.status(500).json({error: 'An error occurred, please try again later'});
-    });
-  }
-  else {
-    memeDao.getRandomMeme(1).then(meme => {
-      res.json(meme);
-    }).catch(err => {
-      console.error(err);
-      res.status(500).json({error: 'An error occurred, please try again later'});
-    });
-  }
+  setTimeout(() => {
+    if (req.isAuthenticated()) {
+      memeDao.getRandomMeme(3).then(memes => {
+        res.json(memes);
+      }).catch(err => {
+        console.error(err);
+        res.status(500).json({error: 'An error occurred, please try again later'});
+      });
+    }
+    else {
+      memeDao.getRandomMeme(1).then(meme => {
+        res.json(meme);
+      }).catch(err => {
+        console.error(err);
+        res.status(500).json({error: 'An error occurred, please try again later'});
+      });
+    }
+  }, TIMEOUT);
 });
 
 app.get('/api/memes/:id/captions', (req, res) => {
-  memeDao.getCaptions(req.params.id).then(captions => {
-    res.json(captions);
-  }).catch(err => {
-    console.error(err);
-    res.status(500).json({error: 'An error occurred, please try again later'});
-  });
+  setTimeout(() => {
+    memeDao.getCaptions(req.params.id).then(captions => {
+      res.json(captions);
+    }).catch(err => {
+      console.error(err);
+      res.status(500).json({error: 'An error occurred, please try again later'});
+    });
+  }, TIMEOUT);
 });
 
 app.post('/api/sessions', function(req, res, next) {
-  passport.authenticate('local', (err, user, info) => {
-    if (err)
-      return next(err);
-      if (!user) {
-        // display wrong login messages
-        return res.status(401).send(info);
-      }
-      // success, perform the login
-      req.login(user, (err) => {
-        if (err)
-          return next(err);
-        
-        // req.user contains the authenticated user, we send all the user info back
-        return res.status(201).json(req.user);
-      });
-  })(req, res, next);
+  setTimeout(() => {
+    passport.authenticate('local', (err, user, info) => {
+      if (err)
+        return next(err);
+        if (!user) {
+          // display wrong login messages
+          return res.status(401).send(info);
+        }
+        // success, perform the login
+        req.login(user, (err) => {
+          if (err)
+            return next(err);
+          
+          // req.user contains the authenticated user, we send all the user info back
+          return res.status(201).json(req.user);
+        });
+    })(req, res, next);
+  }, TIMEOUT);
 });
 
 app.get('/api/sessions/current', (req, res) => {
-  if(req.isAuthenticated()) {
-    res.json(req.user);}
-  else
-    res.status(401).json({error: 'Not authenticated'});
+  setTimeout(() => {
+    if(req.isAuthenticated()) {
+      res.json(req.user);}
+    else
+      res.status(401).json({error: 'Not authenticated'});
+  }, TIMEOUT);
 });
 
 app.delete('/api/sessions/current', (req, res) => {
-  req.logout(() => {
-    res.end();
-  });
+  setTimeout(() => {
+      req.logout(() => {
+      res.end();
+    });
+  }, TIMEOUT);
 });
 
 app.post('/api/games',isLoggedIn, (req, res) => {
-  const game = new Game(-1,req.user.id, req.body.scores, req.body.images);
-  gameDao.addGame(game).then(id => {
-    res.status(201).json(id);
-  }).catch(err => {
-    console.error(err);
-    res.status(500).json({error: 'An error occurred, please try again later'});
-  });
+  setTimeout(() => {
+    const game = new Game(-1,req.user.id, req.body.scores, req.body.images);
+    gameDao.addGame(game).then(id => {
+      res.status(201).json(id);
+    }).catch(err => {
+      console.error(err);
+      res.status(500).json({error: 'An error occurred, please try again later'});
+    });
+  }, TIMEOUT);
 });
 
 app.get('/api/games',isLoggedIn, (req, res) => {
-  gameDao.getGamesByUser(req.user.id).then(games => {
+  setTimeout(() => {
+    gameDao.getGamesByUser(req.user.id).then(games => {
     res.json(games);
-  }).catch(err => {
-    console.error(err);
-    res.status(500).json({error: 'An error occurred, please try again later'});
-  });
+    }).catch(err => {
+      console.error(err);
+      res.status(500).json({error: 'An error occurred, please try again later'});
+    });
+  }, TIMEOUT);
 });
 
 

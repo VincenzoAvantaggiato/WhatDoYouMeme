@@ -2,20 +2,23 @@ import { useEffect, useState } from "react";
 import { Col, Container, Offcanvas, Pagination, Row, Table } from "react-bootstrap";
 import API from "../API";
 
-function PreviousGames() {
+function PreviousGames(props) {
     const [games, setGames] = useState([]);
     const [page, setPage] = useState(0);
     const [numPages, setNumPages] = useState(1);
     const maxRows = 10;
     const [gameDetails, setGameDetails] = useState(null);
+    const [waiting, setWaiting] = useState(false);
 
     useEffect(() => {
         const getGames = async () => {
+            setWaiting(true);
             const games = await API.getGames();
             setGames(games);
+            setWaiting(false);
         }
         getGames();
-    }, []);
+    }, [props.saving]);
     useEffect(() => {
         setNumPages(Math.ceil(games.length / maxRows));
     }, [games]);
@@ -35,7 +38,15 @@ function PreviousGames() {
                         </tr>
                     </thead>
                     <tbody>
-                        {games.slice(page*maxRows,(page+1)*maxRows).map(game => (
+                        {waiting && Array.from({length: maxRows-games.slice(page*maxRows,(page+1)*maxRows).length}).map((_,i)=> (
+                            <tr key={`empty-${i}`}>
+                                <td className="text-center">Loading...</td>
+                                <td className="text-center">‎</td>
+                                <td className="text-center">‎</td>
+                                <td className="text-center">‎</td>
+                            </tr>
+                        ))}
+                        {!waiting && games.slice(page*maxRows,(page+1)*maxRows).map(game => (
                             <tr key={game.id} onClick={()=>setGameDetails(game)}>
                                 <td className="text-center">{game.id}</td>
                                 <td className="text-center">{game.scores.filter(s=>s==5).length}</td>
@@ -43,7 +54,7 @@ function PreviousGames() {
                                 <td className="text-center">{game.scores.reduce((a,b)=>a+b)}</td>
                             </tr>
                         ))}
-                        {Array.from({length: maxRows-games.slice(page*maxRows,(page+1)*maxRows).length}).map((_,i)=> (
+                        {!waiting && Array.from({length: maxRows-games.slice(page*maxRows,(page+1)*maxRows).length}).map((_,i)=> (
                             <tr key={`empty-${i}`}>
                                 <td className="text-center">‎</td>
                                 <td className="text-center">‎</td>
