@@ -27,7 +27,7 @@ function Header(props) {
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu align="end">
                                         <Dropdown.Item onClick={()=>{props.reload();navigate('/play')}}>New game</Dropdown.Item>
-                                        <Dropdown.Item onClick={()=>navigate('/history')}>Previous games</Dropdown.Item>
+                                        <Dropdown.Item onClick={()=>navigate('/profile')}>Profile</Dropdown.Item>
                                         <Dropdown.Divider />
                                         <Dropdown.Item onClick={()=>{props.handleLogout(); navigate('/logout')}} className='d-flex justify-content-between'>Logout <i className='bi bi-box-arrow-right'></i></Dropdown.Item>
                                     </Dropdown.Menu>

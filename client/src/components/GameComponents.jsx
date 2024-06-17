@@ -41,15 +41,17 @@ function GamePage(props) {
         setScores(scores => scores.map((score, index) => index === round-1 ? score + 5 : score));
     }
 
+    const getMemes = async () => {
+        setWaiting(true);
+        const memes = await API.getMemes();
+        setMemes(memes);
+        setWaiting(false);
+        nextRound();
+    }
+
     useEffect(() => {
-        const getMemes = async () => {
-            setWaiting(true);
-            const memes = await API.getMemes();
-            setMemes(memes);
-            setWaiting(false);
-        }
+        
         if (round===0) {
-            getMemes();
             setScores([0,0,0]);
             setSelectedAnswers([null, null, null]);
         }
@@ -74,7 +76,8 @@ function GamePage(props) {
     }
     return(
         <>
-        {round === 0 ? <Instructions next={nextRound} loggedIn={props.loggedIn} waiting={waiting}/> : 
+        {round === 0 ? !waiting? <Instructions next={nextRound} loggedIn={props.loggedIn} waiting={waiting} getMemes={getMemes}/> : 
+             <Container className='d-flex flex-column align-items-center justify-content-center'><h1>Loading...</h1></Container> :
          round ===-1 ? <Recap loggedIn={props.loggedIn} scores={scores} next={nextRound} selectedAnswers={selectedAnswers} images={memes.map(meme=>meme.image_path)} saving={props.saving}></Recap>:
                        <Round round={round} image={memes[round-1].image_path} captions={memes[round-1].captions} score={scores.reduce((a,b)=>a+b)} next={nextRound} roundOver={roundOver} submitAnswer={submitAnswer} rightCaptions={rightCaptions} selectedAnswer={selectedAnswers[round-1]} waiting={waiting}/>}
         </>
@@ -91,7 +94,7 @@ function Instructions(props){
             <h4><i className="bi bi-joystick fs-3 text-primary"></i> {props.loggedIn? <>3 rounds</> :<>1 round</>}</h4>
             {!props.loggedIn && <p><i className="bi bi-person"></i> Login to play 3 rounds</p>}
             <hr/>
-            <Button className="btn btn-primary" onClick={()=>props.next()} disabled={props.waiting}>Start Game</Button>
+            <Button className="btn btn-primary" onClick={()=>{props.getMemes();}} disabled={props.waiting}>Start Game</Button>
         </Container>)
 }
 
@@ -120,7 +123,7 @@ function Recap(props){
             <br></br>
             <Row>
                 <Col className="d-flex justify-content-center align-items-center"><Link to='/' className='btn btn-primary bi bi-house'> Home</Link></Col>
-                {props.loggedIn &&<Col className="d-flex justify-content-center align-items-center"><Link to='/history' className='btn btn-danger bi bi-controller '> Previous games</Link></Col>}
+                {props.loggedIn &&<Col className="d-flex justify-content-center align-items-center"><Link to='/profile' className='btn btn-danger bi bi-controller '> Previous games</Link></Col>}
                 <Col className="d-flex justify-content-center align-items-center"><Link to='/play' className={props.saving?'btn btn-success bi bi-joystick disabled':'btn btn-success bi bi-joystick'} onClick={()=>props.next()}> Play again</Link></Col>
             </Row>
             

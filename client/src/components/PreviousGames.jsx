@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
-import { Col, Container, Offcanvas, Pagination, Row, Table } from "react-bootstrap";
+import { Button, Col, Container, Offcanvas, Pagination, Row, Table } from "react-bootstrap";
 import API from "../API";
+import Propic from "../assets/man-user-color-icon.svg";
+import { Link } from "react-router-dom";
 
 function PreviousGames(props) {
     const [games, setGames] = useState([]);
     const [page, setPage] = useState(0);
     const [numPages, setNumPages] = useState(1);
-    const maxRows = 10;
+    const maxRows = 8;
     const [gameDetails, setGameDetails] = useState(null);
     const [waiting, setWaiting] = useState(false);
 
@@ -23,11 +25,14 @@ function PreviousGames(props) {
         setNumPages(Math.ceil(games.length / maxRows));
     }, [games]);
     return (<>
-            <h1 className="w-100 text-center">Previous Games</h1>
-            <p className="w-100 text-center">Click on a game to see the details</p>
-        <Row>
-            {/*!gameDetails && */<Col></Col>}
-            <Col >
+            
+        <Row className="mx-5">
+            <Col className="d-flex">
+                <Profile user={props.user} tot_games={games.length} handleLogout={props.handleLogout} correct_guesses={games.length>0?games.flatMap(game=>game.scores).filter(s=>s==5).length/games.flatMap(game=>game.scores).length:0}></Profile>
+            </Col>
+            {<Col >
+                <h1 className="w-100 text-center">Previous Games</h1>
+                <p className="w-100 text-center">Click on a game to see the details</p>
                 <Table striped bordered hover >
                     <thead>
                         <tr>
@@ -77,12 +82,10 @@ function PreviousGames(props) {
                             </Pagination>
                         }  
                 </Container>
-            </Col>
+            </Col>}
             
-            <Col>
-            {gameDetails&& <Details game={gameDetails} closeDetails={()=>setGameDetails(null)}/>}
-            </Col>
         </Row>
+        {gameDetails&& <Details game={gameDetails} closeDetails={()=>setGameDetails(null)}/>}
         
         </>
     );
@@ -116,6 +119,20 @@ function Details(props) {
                 </Row>
             </Offcanvas.Body>
         </Offcanvas>
+    );
+}
+
+function Profile(props) {
+    return (
+        <Container className="d-flex flex-column justify-content-center align-items-center">
+            <img src={Propic} alt="Profile" style={{maxWidth: '25vw', maxHeight: '20vh', height: 'auto', width: 'auto' }} />
+            <h3>@{props.user.username}</h3>
+            <h3>Games played: {props.tot_games}</h3>
+            <h3>Correctly guessed memes: {(props.correct_guesses*100).toFixed(2)}%</h3>
+            <br/>
+            <Button onClick={()=>{props.handleLogout(); navigate('/logout')}}>Logout    <i className='bi bi-box-arrow-right'></i></Button>
+        
+        </Container>
     );
 }
 
