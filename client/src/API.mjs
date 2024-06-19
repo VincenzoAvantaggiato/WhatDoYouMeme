@@ -1,4 +1,4 @@
-const SERVER_URL = 'http://localhost:3001';
+export const SERVER_URL = 'http://localhost:3001';
 
 const logIn = async (credentials) => {
     const response = await fetch(SERVER_URL + '/api/sessions', {

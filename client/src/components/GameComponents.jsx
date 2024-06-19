@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import API from "../API";
 import Loser from "../assets/pepe-loser.gif";
-import {Game}  from "../../Meme.mjs";
+import { SERVER_URL } from "../API.mjs";
 
 
 function GamePage(props) {
@@ -18,7 +18,7 @@ function GamePage(props) {
     const saveGame = async () => {
         try {
             props.setSaving(true)
-            await API.createGame(new Game(-1,-1, scores, memes.map(meme=>meme.image_path)));
+            await API.createGame({scores: scores, images: memes.map(meme=>meme.image_path)});
             props.setSaving(false);
         } catch (err) {
             console.error(err);
@@ -79,7 +79,7 @@ function GamePage(props) {
         {round === 0 ? !waiting? <Instructions next={nextRound} loggedIn={props.loggedIn} waiting={waiting} getMemes={getMemes}/> : 
              <Container className='d-flex flex-column align-items-center justify-content-center'><h1>Loading...</h1></Container> :
          round ===-1 ? <Recap loggedIn={props.loggedIn} scores={scores} next={nextRound} selectedAnswers={selectedAnswers} images={memes.map(meme=>meme.image_path)} saving={props.saving}></Recap>:
-                       <Round round={round} image={memes[round-1].image_path} captions={memes[round-1].captions} score={scores.reduce((a,b)=>a+b)} next={nextRound} roundOver={roundOver} submitAnswer={submitAnswer} rightCaptions={rightCaptions} selectedAnswer={selectedAnswers[round-1]} waiting={waiting}/>}
+                       <Round round={round} image={memes[round-1].image_path} captions={memes[round-1].captions} score={scores.reduce((a,b)=>a+b)} next={nextRound} roundOver={roundOver} submitAnswer={submitAnswer} rightCaptions={rightCaptions} selectedAnswer={selectedAnswers[round-1]} waiting={waiting} loggedIn={props.loggedIn}/>}
         </>
     )
 }
@@ -115,7 +115,7 @@ function Recap(props){
                     if (score==0) return;
                     return <Col key={index} className="d-flex flex-column  align-items-center">
                         
-                        <img src={props.images[index]} alt="Meme" style={{maxWidth: '15vw', maxHeight: '15vh', height: 'auto', width: 'auto' }}/>
+                        <img src={SERVER_URL+"/api/images/"+props.images[index]} alt="Meme" style={{maxWidth: '15vw', maxHeight: '15vh', height: 'auto', width: 'auto' }}/>
                         <p className="text-center">{props.selectedAnswers[index].text}</p>
                     </Col>
                 })}
@@ -142,12 +142,12 @@ function Round(props) {
                     <h6 className="d-flex justify-content-center">Guess the caption that best fits the image</h6>
                 </Col>
                 <Col>
-                    <h2 className="d-flex justify-content-end"><i className="bi bi-award-fill fs-2 text-primary"></i> Score: {props.score}</h2>
+                    <h2 className="d-flex justify-content-end me-3"><i className="bi bi-award-fill fs-2 text-primary"></i> Score: {props.score}</h2>
                 </Col>
             </Row>
             <Row className="m-3 d-flex h-50 justify-content-center align-items-center">
                 <Col className="d-flex justify-content-center align-items-center">
-                    <img src={props.image} alt="Meme" style={{maxWidth: '45vw', maxHeight: '40vh', height: 'auto', width: 'auto' }}/>
+                    <img src={SERVER_URL+"/api/images/"+props.image} alt="Meme" style={{maxWidth: '45vw', maxHeight: '40vh', height: 'auto', width: 'auto' }}/>
                 </Col>
                 <Col>
                     {props.captions.map(caption => <Row><Button key={caption.id} className={!props.roundOver?"btn-light border border-primary border-2 rounded m-2": 
@@ -160,10 +160,12 @@ function Round(props) {
                                                     disabled={props.roundOver} onClick={()=>props.submitAnswer(caption)}>{caption.text}</Button></Row>)}
                 </Col>
             </Row>
-            <Row className="h-25">
+            <Row className="h-25 d-flex align-items-start">
             {!props.roundOver && <Timer time={30} submitAnswer={props.submitAnswer} className='footer'/>}
-            {props.roundOver && <Container className='d-flex flex-column align-items-center justify-content-center'>
-                <Button className="btn btn-primary" onClick={()=>props.next()} disabled={props.waiting}>Next Round</Button>
+            {props.roundOver && 
+                <Container className='d-flex flex-column align-items-center justify-content-center'>
+                    {props.rightCaptions.includes(props.selectedAnswer.id)? <h1 className="text-success text-center">Correct!</h1>:<h1 className="text-danger text-center">Wrong!</h1>}
+                    <Button className="btn btn-primary m-3" onClick={()=>props.next()} disabled={props.waiting}>{((props.loggedIn && props.round >= 3)||(!props.loggedIn && props.round >= 1))?"Finish game":"Next Round"}</Button>
                 </Container>}
             </Row>
         </>

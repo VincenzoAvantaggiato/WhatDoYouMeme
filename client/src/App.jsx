@@ -11,7 +11,7 @@ import API from './API';
 import GamePage from './components/GameComponents';
 import NotFound from './components/NotFound';
 import WelcomePage from './components/WelcomePage';
-import PreviousGames from './components/PreviousGames';
+import ProfilePage from './components/ProfileComponents';
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -88,7 +88,7 @@ function App() {
           <Route path='/play' element={waiting?<h1 className='text-center'>Waiting for server response...</h1>:<GamePage loggedIn={loggedIn} key={flag} saving={saving} setSaving={setSaving}/>}/>
           <Route path='/login' element={loggedIn ? <Navigate replace to='/' /> :<LoginForm login={handleLogin} waiting={waiting}/>} />
           <Route path='/logout' element={waiting?<h1 className='text-center'>Logging out..</h1>:<Navigate replace to='/' />}/>
-          <Route path='/profile' element={!loggedIn ? <Navigate replace to='/' /> :waiting?<h1 className='text-center'>Waiting for server response...</h1>:<PreviousGames saving={saving} user={user} handleLogout={handleLogout}/>}/>
+          <Route path='/profile' element={!loggedIn ? <Navigate replace to='/' /> :waiting?<h1 className='text-center'>Waiting for server response...</h1>:<ProfilePage saving={saving} user={user} handleLogout={handleLogout}/>}/>
           <Route path='*' element={<NotFound/>}/>
         </Route> 
       </Routes>

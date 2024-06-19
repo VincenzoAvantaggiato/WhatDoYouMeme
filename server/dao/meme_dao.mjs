@@ -1,6 +1,5 @@
 import { db } from "../db.mjs";
 import { Image, Caption } from "../Meme.mjs";
-import SERVER from "../index.mjs";
 
 export default function MemeDAO() {
     this.getRandomMeme = function(num) {
@@ -12,7 +11,7 @@ export default function MemeDAO() {
                     const images = [];
                     const captions=rows.map(row => {
                     
-                        let image=new Image(row.id, SERVER+"/"+row.image_path, []);
+                        let image=new Image(row.id, row.image_path, []);
                         return new Promise((resolve, reject) => {
                             db.all('SELECT C.id, C.text FROM image_caption IC INNER JOIN captions C ON IC.caption_id = C.id WHERE image_id = ? ORDER BY RANDOM() LIMIT 2', [row.id], (err, rows) => {
                                 if (err) {

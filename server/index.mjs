@@ -29,7 +29,7 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-app.use('/images', express.static('public/images'));
+app.use('/api/images', express.static('public/images'));
 
 passport.use(new LocalStrategy(async function verify(username, password, cb) {
   const user = await userDao.getUser(username, password);
