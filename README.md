@@ -157,7 +157,7 @@
 - `ProfilePage` (in `ProfileComponents.jsx`): wraps `Profile` and `PreviousGames`
 - `Profile` (in `ProfileComponents.jsx`): it shows the user info pus some statistics
 - `PreviousGames` (in `ProfileComponents.jsx`): shows user's previous games
-- `Details` (in `ProfileComponents.jsx`): shous game details on a OffCanvas
+- `Details` (in `ProfileComponents.jsx`): shows game details on a OffCanvas
 
 ## Screenshot
 

@@ -34,18 +34,18 @@ db.serialize(() => {
   });
 
   db.run(`INSERT INTO images (image_path) VALUES 
-          ("images/meme1.jpg"),
-          ("images/meme2.jpg"),
-          ("images/meme3.jpg"),
-          ("images/meme4.png"),
-          ("images/meme5.jpg"),
-          ("images/meme6.jpg"),
-          ("images/meme7.jpg"),
-          ("images/meme8.jpg"),
-          ("images/meme9.jpg"),
-          ("images/meme10.jpg"),
-          ("images/meme11.gif"),
-          ("images/meme12.jpg")`, (err) => {
+          ("meme1.jpg"),
+          ("meme2.jpg"),
+          ("meme3.jpg"),
+          ("meme4.png"),
+          ("meme5.jpg"),
+          ("meme6.jpg"),
+          ("meme7.jpg"),
+          ("meme8.jpg"),
+          ("meme9.jpg"),
+          ("meme10.jpg"),
+          ("meme11.gif"),
+          ("meme12.jpg")`, (err) => {
     if (err) console.error('Error inserting into image table:', err);
     else console.log('Image table populated successfully');
   });
@@ -71,7 +71,37 @@ db.serialize(() => {
           ("Studia durante tutto il semestre // Quel collega"),
           ("Rifiuta un 18 // Quel collega"),
           ("Average python fan // Average C enjoyer"),
-          ("Average front-end developer // Average back-end developer")
+          ("Average front-end developer // Average back-end developer"),
+          ("Io al primo esame // Io all'ultimo esame"),
+          ("Procrastinare // Studiare"),
+          ("Avere un piano di studio // Seguirlo"),
+          ("La mia motivazione a inizio semestre // La mia motivazione alla fine del semestre"),
+          ("Avere un buon portatile // Avere una buona connessione internet"),
+          ("Ultimo giorno per iscriversi agli esami // Server del portale"),
+          ("Sessione estiva // Sessione invernale"),
+          ("Scrivere codice senza errori // Trovare tutti i bug"),
+          ("Quando ti dicono che l'esame è solo a crocette // Quando ti dicono che c'è anche un orale"),
+          ("Iniziare il progetto subito // Fare tutto l'ultimo giorno"),
+          ("Quando capisci l'argomento // Quando non capisci nulla"),
+          ("Ascoltare le lezioni registrate // Ascoltare le lezioni in diretta"),
+          ("Quando il wifi smette di funzionare durante l'esame online"),
+          ("Capire la teoria // Saper risolvere i problemi"),
+          ("Essere preparati per l'esame // Sperare in un miracolo"),
+          ("Andare in Erasmus // Rimanere a casa"),
+          ("Lezione su Zoom // Lezione in presenza"),
+          ("Quando dimentichi di spegnere il microfono su Zoom"),
+          ("Quando ti rendi conto che l'esame è domani"),
+          ("La faccia che fai quando vedi il compito in classe"),
+          ("Quando il server del portale va giù all'iscrizione agli esami"),
+          ("La mia faccia dopo aver visto il voto"),
+          ("Quando speri in un 18 e prendi 30"),
+          ("Quando tutti capiscono tranne te"),
+          ("Quando capisci che il semestre sta per finire"),
+          ("Aspettando l'esito dell'esame"),
+          ("Quando ti svegli in ritardo per l'esame"),
+          ("Quando l'esame viene spostato di una settimana"),
+          ("Quando il tuo laptop decide di aggiornarsi proprio durante l'esame online"),
+          ("Quando il tuo compagno di studio non smette di parlare")
           `, (err) => {
     if (err) console.error('Error inserting into caption table:', err);
     else console.log('Caption table populated successfully');
@@ -102,7 +132,18 @@ db.serialize(() => {
           (11, 19),
           (11, 20),
           (12, 5),
-          (12,1)
+          (12,1),
+          (4,31),
+          (4,30),
+          (10,46),
+          (6,46),
+          (8,33),
+          (4,36),
+          (12,46),
+          (12,47),
+          (8,38),
+          (1,39),
+          (1,50)
           `, (err) => {
     if (err) console.error('Error inserting into image_caption table:', err);
     else console.log('Image_caption table populated successfully');

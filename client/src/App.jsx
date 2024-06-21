@@ -33,7 +33,7 @@ function App() {
       }
       catch(err) {
         setWaiting(false);
-
+        
       }
     };
     checkAuth();
@@ -53,18 +53,25 @@ function App() {
       setUser(user);
       setWaiting(false);
     }catch(err) {
-      setMessage({msg: err, type: 'danger'});
+      setMessage({msg: err.message || err, type: 'danger'});
       setWaiting(false);
     }
   };
   const handleLogout = async () => {
-    setWaiting(true);
-    await API.logOut();
-    setLoggedIn(false);
-    // clean up everything
-    setMessage('');
-    setUser(null);
-    setWaiting(false);
+    try {
+      setWaiting(true);
+      await API.logOut();
+      setLoggedIn(false);
+      // clean up everything
+      setMessage({msg: 'Successfully logged out!', type: 'success'});
+      setUser(null);
+      setWaiting(false);
+    }
+    catch(err) {
+      setMessage({msg: err.message, type: 'danger'});
+      setWaiting(false);
+    }
+    
   };
 
   return (
@@ -77,7 +84,7 @@ function App() {
             <Outlet/>
 
             {message && <Row>
-              <Alert variant={message.type} onClose={() => setMessage('')} dismissible className="position-fixed top-0 end-0 w-25 me-1" style={{marginTop:'7vh'}}>{message.msg}</Alert>
+              <Alert variant={message.type} onClose={() => setMessage('')} dismissible className="position-fixed top-0 end-0 w-25 me-1" style={{marginTop:'8vh'}}>{message.msg}</Alert>
             </Row> }
             
           </Container>
@@ -85,10 +92,10 @@ function App() {
           </>
         }>
           <Route path='/' element={waiting?<h1 className='text-center'>Waiting for server response...</h1>:<WelcomePage loggedIn={loggedIn} user={user}/>}/>
-          <Route path='/play' element={waiting?<h1 className='text-center'>Waiting for server response...</h1>:<GamePage loggedIn={loggedIn} key={flag} saving={saving} setSaving={setSaving}/>}/>
+          <Route path='/play' element={waiting?<h1 className='text-center'>Waiting for server response...</h1>:<GamePage loggedIn={loggedIn} key={flag} setSaving={setSaving} setMessage={setMessage}/>}/>
           <Route path='/login' element={loggedIn ? <Navigate replace to='/' /> :<LoginForm login={handleLogin} waiting={waiting}/>} />
           <Route path='/logout' element={waiting?<h1 className='text-center'>Logging out..</h1>:<Navigate replace to='/' />}/>
-          <Route path='/profile' element={!loggedIn ? <Navigate replace to='/' /> :waiting?<h1 className='text-center'>Waiting for server response...</h1>:<ProfilePage saving={saving} user={user} handleLogout={handleLogout}/>}/>
+          <Route path='/profile' element={!loggedIn ? <Navigate replace to='/' /> :waiting?<h1 className='text-center'>Waiting for server response...</h1>:<ProfilePage saving={saving} user={user} handleLogout={handleLogout} setMessage={setMessage}/>}/>
           <Route path='*' element={<NotFound/>}/>
         </Route> 
       </Routes>

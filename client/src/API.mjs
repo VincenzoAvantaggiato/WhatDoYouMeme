@@ -39,7 +39,8 @@ const getMemes = async () => {
     return memes;
   }
   else {
-    const errDetails = await response.text();
+    const errDetails = await response.json();
+    console.log(errDetails);
     throw errDetails;
   }
 };
@@ -55,7 +56,7 @@ const getRightCaptions = async (image_id) => {
     return captions;
   }
   else {
-    const errDetails = await response.text();
+    const errDetails = await response.json();
     throw errDetails;
   }
 };
@@ -71,7 +72,7 @@ const getGames = async () => {
     return games;
   }
   else {
-    const errDetails = await response.text();
+    const errDetails = await response.json();
     throw errDetails;
   }
 };
@@ -91,7 +92,7 @@ const createGame = async (game) => {
     return game;
   }
   else {
-    const errDetails = await response.text();
+    const errDetails = await response.json();
     throw errDetails;
   }
 };

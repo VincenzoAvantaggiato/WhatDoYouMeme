@@ -51,7 +51,7 @@ const isLoggedIn = (req, res, next) => {
   if(req.isAuthenticated()) {
     return next();
   }
-  return res.status(401).json({error: 'Not authorized'});
+  return res.status(401).json({message: 'Not authorized'});
 }
 
 app.use(session({
@@ -69,7 +69,7 @@ app.get('/api/memes/random', (req, res) => {
         res.json(memes);
       }).catch(err => {
         console.error(err);
-        res.status(500).json({error: 'An error occurred, please try again later'});
+        res.status(500).json({message: 'An error occurred, please try again later'});
       });
     }
     else {
@@ -77,7 +77,7 @@ app.get('/api/memes/random', (req, res) => {
         res.json(meme);
       }).catch(err => {
         console.error(err);
-        res.status(500).json({error: 'An error occurred, please try again later'});
+        res.status(500).json({message: 'An error occurred, please try again later'});
       });
     }
   }, TIMEOUT);
@@ -89,7 +89,7 @@ app.get('/api/memes/:id/captions', (req, res) => {
       res.json(captions);
     }).catch(err => {
       console.error(err);
-      res.status(500).json({error: 'An error occurred, please try again later'});
+      res.status(500).json({message: 'An error occurred, please try again later'});
     });
   }, TIMEOUT);
 });
@@ -120,7 +120,7 @@ app.get('/api/sessions/current', (req, res) => {
     if(req.isAuthenticated()) {
       res.json(req.user);}
     else
-      res.status(401).json({error: 'Not authenticated'});
+      res.status(401).json({message: 'Not authenticated'});
   }, TIMEOUT);
 });
 
@@ -139,7 +139,7 @@ app.post('/api/games',isLoggedIn, (req, res) => {
       res.status(201).json(id);
     }).catch(err => {
       console.error(err);
-      res.status(500).json({error: 'An error occurred, please try again later'});
+      res.status(500).json({message: 'An error occurred, please try again later'});
     });
   }, TIMEOUT);
 });
@@ -150,7 +150,7 @@ app.get('/api/games',isLoggedIn, (req, res) => {
     res.json(games);
     }).catch(err => {
       console.error(err);
-      res.status(500).json({error: 'An error occurred, please try again later'});
+      res.status(500).json({message: 'An error occurred, please try again later'});
     });
   }, TIMEOUT);
 });

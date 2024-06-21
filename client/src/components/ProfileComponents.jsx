@@ -18,8 +18,12 @@ function ProfilePage(props) {
             setGames(games);
             setWaiting(false);
         }
-        getGames();
+        getGames().catch(err => {
+            setMessage({msg: err.message, type: 'danger'});
+            setWaiting(false);
+        });
     }, [props.saving]);
+
     useEffect(() => {
         setNumPages(Math.ceil(games.length / maxRows));
     }, [games]);
@@ -52,7 +56,7 @@ function Details(props) {
                 <Row className="d-flex justify-content-around align-items-center">
                     <Col className="d-flex flex-column justify-content-center align-items-center">
                         <h3 >Round 1</h3>
-                        <img src={SERVER_URL+"/api/images/"+props.game.images[0]} alt="Round 1" style={{maxWidth: '25vw', maxHeight: '20vh', height: 'auto', width: 'auto', borderWidth: '5px', borderStyle: 'solid'}} className={props.game.scores[0]==5?"border border-success border-5 p-0" : "border border-danger border-5 p-0"}/>
+                        <img src={SERVER_URL+"/api/images/"+props.game.images[0]} alt="Round 1" style={{maxWidth: '25vw', maxHeight: '20vh', height: 'auto', width: 'auto'}} className={props.game.scores[0]==5?"border border-success border-5 p-0" : "border border-danger border-5 p-0"}/>
                         <h3 className={props.game.scores[0]==5?"text-success":"text-danger"}>{"Score: "+props.game.scores[0]}</h3>
                     </Col>
                     <Col className="d-flex flex-column justify-content-center align-items-center">

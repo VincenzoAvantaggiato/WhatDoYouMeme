@@ -21,7 +21,8 @@ function GamePage(props) {
             await API.createGame({scores: scores, images: memes.map(meme=>meme.image_path)});
             props.setSaving(false);
         } catch (err) {
-            console.error(err);
+            props.setMessage({msg: err.message , type: 'danger'});
+            props.setSaving(false);
         }
     }
     const nextRound = () => {
@@ -42,11 +43,17 @@ function GamePage(props) {
     }
 
     const getMemes = async () => {
-        setWaiting(true);
-        const memes = await API.getMemes();
-        setMemes(memes);
-        setWaiting(false);
-        nextRound();
+        try {
+            setWaiting(true);
+            const memes = await API.getMemes();
+            setMemes(memes);
+            setWaiting(false);
+            nextRound();
+        }
+        catch (err) {
+            props.setMessage({msg: err.message , type: 'danger'});
+            setWaiting(false);
+        }
     }
 
     useEffect(() => {
@@ -71,14 +78,14 @@ function GamePage(props) {
             setWaiting(false);
         }
         catch (err) {
-            console.error(err);
+            props.setMessage({msg: err.message , type: 'danger'});
         }
     }
     return(
         <>
         {round === 0 ? !waiting? <Instructions next={nextRound} loggedIn={props.loggedIn} waiting={waiting} getMemes={getMemes}/> : 
              <Container className='d-flex flex-column align-items-center justify-content-center'><h1>Loading...</h1></Container> :
-         round ===-1 ? <Recap loggedIn={props.loggedIn} scores={scores} next={nextRound} selectedAnswers={selectedAnswers} images={memes.map(meme=>meme.image_path)} saving={props.saving}></Recap>:
+         round ===-1 ? <Recap loggedIn={props.loggedIn} scores={scores} next={nextRound} selectedAnswers={selectedAnswers} images={memes.map(meme=>meme.image_path)} ></Recap>:
                        <Round round={round} image={memes[round-1].image_path} captions={memes[round-1].captions} score={scores.reduce((a,b)=>a+b)} next={nextRound} roundOver={roundOver} submitAnswer={submitAnswer} rightCaptions={rightCaptions} selectedAnswer={selectedAnswers[round-1]} waiting={waiting} loggedIn={props.loggedIn}/>}
         </>
     )
@@ -104,10 +111,11 @@ function Recap(props){
         <Container className='d-flex flex-column align-items-center justify-content-center'>
             <h1>Game Over</h1>
             <h4>Thank you for playing!</h4>
+            {props.loggedIn && <>
             <h4><i className="bi bi-check-circle-fill fs-3 text-success"></i> Correct answers: {props.scores.filter(s=>s==5).length}</h4>
             <h4><i className="bi bi-x-circle-fill fs-3 text-danger"></i> Wrong answers: {props.loggedIn? 3-props.scores.filter(s=>s==5).length: 1-props.scores.filter(s=>s==5).length}</h4>
             <h2 className="d-flex justify-content-end"><i className="bi bi-award-fill fs-2 text-primary"></i> Final score: {props.scores.reduce((a,b)=>a+b)}</h2>
-            
+            </>}
             <br></br>
             {props.scores.filter(s=>s==5).length>0 && <h4>Memes that you correctly guessed:</h4>}
             <Row>
@@ -121,11 +129,11 @@ function Recap(props){
                 })}
             </Row>
             <br></br>
-            <Row>
-                <Col className="d-flex justify-content-center align-items-center"><Link to='/' className='btn btn-primary bi bi-house'> Home</Link></Col>
-                {props.loggedIn &&<Col className="d-flex justify-content-center align-items-center"><Link to='/profile' className='btn btn-danger bi bi-controller '> Previous games</Link></Col>}
-                <Col className="d-flex justify-content-center align-items-center"><Link to='/play' className={props.saving?'btn btn-success bi bi-joystick disabled':'btn btn-success bi bi-joystick'} onClick={()=>props.next()}> Play again</Link></Col>
-            </Row>
+            <Container className="d-flex flex-row align-items-center justify-content-center">
+                <Link to='/' className='btn btn-primary bi bi-house mx-1'> Home</Link>
+                {props.loggedIn &&<Link to='/profile' className='btn btn-danger bi bi-controller mx-1'> Previous games</Link>}
+                <Link to='/play' className='btn btn-success bi bi-joystick mx-1' onClick={()=>props.next()}> Play again</Link>
+            </Container>
             
         </Container>
     )};
@@ -150,7 +158,7 @@ function Round(props) {
                     <img src={SERVER_URL+"/api/images/"+props.image} alt="Meme" style={{maxWidth: '45vw', maxHeight: '40vh', height: 'auto', width: 'auto' }}/>
                 </Col>
                 <Col>
-                    {props.captions.map(caption => <Row><Button key={caption.id} className={!props.roundOver?"btn-light border border-primary border-2 rounded m-2": 
+                    {props.captions.map(caption => <Row key={caption.id}><Button key={caption.id} className={!props.roundOver?"btn-light border border-primary border-2 rounded m-2": 
                                                                                             props.waiting?"btn-light border border-warning border-2 rounded m-2":
                                                                                             props.selectedAnswer.id===caption.id?
                                                                                             props.rightCaptions.includes(caption.id)?"btn-success border border-success border-2 rounded m-2"
@@ -164,7 +172,7 @@ function Round(props) {
             {!props.roundOver && <Timer time={30} submitAnswer={props.submitAnswer} className='footer'/>}
             {props.roundOver && 
                 <Container className='d-flex flex-column align-items-center justify-content-center'>
-                    {props.rightCaptions.includes(props.selectedAnswer.id)? <h1 className="text-success text-center">Correct!</h1>:<h1 className="text-danger text-center">Wrong!</h1>}
+                    {props.waiting? <h1 className="text-warning text-center">Waiting...</h1>:props.rightCaptions.includes(props.selectedAnswer.id)? <h1 className="text-success text-center">Correct!</h1>:<h1 className="text-danger text-center">Wrong!</h1>}
                     <Button className="btn btn-primary m-3" onClick={()=>props.next()} disabled={props.waiting}>{((props.loggedIn && props.round >= 3)||(!props.loggedIn && props.round >= 1))?"Finish game":"Next Round"}</Button>
                 </Container>}
             </Row>
