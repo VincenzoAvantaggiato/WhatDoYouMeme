@@ -7,7 +7,7 @@ import { SERVER_URL } from "../API.mjs";
 function ProfilePage(props) {
     const [games, setGames] = useState([]);
     const [numPages, setNumPages] = useState(1);
-    const maxRows = 8;
+    const maxRows = 6;
     const [gameDetails, setGameDetails] = useState(null);
     const [waiting, setWaiting] = useState(false);
 
@@ -48,7 +48,7 @@ function ProfilePage(props) {
 
 function Details(props) {
     return (
-        <Offcanvas show={true} onHide={()=>props.closeDetails()} placement="bottom" className="bg-light" style={{ height: '40vh', maxHeight: '40vh' }}>
+        <Offcanvas show={true} onHide={()=>props.closeDetails()} placement="bottom" className="my-offcanvas bg-light ">
             <Offcanvas.Header closeButton>
                 <Offcanvas.Title>Game {props.game.id}</Offcanvas.Title>
             </Offcanvas.Header>
@@ -56,17 +56,17 @@ function Details(props) {
                 <Row className="d-flex justify-content-around align-items-center">
                     <Col className="d-flex flex-column justify-content-center align-items-center">
                         <h3 >Round 1</h3>
-                        <img src={SERVER_URL+"/api/images/"+props.game.images[0]} alt="Round 1" style={{maxWidth: '25vw', maxHeight: '20vh', height: 'auto', width: 'auto'}} className={props.game.scores[0]==5?"border border-success border-5 p-0" : "border border-danger border-5 p-0"}/>
+                        <img src={SERVER_URL+"/api/images/"+props.game.images[0]} alt="Round 1" className={props.game.scores[0]==5?"border border-success border-5 p-0 image-offcanvas" : "border border-danger border-5 p-0 image-offcanvas"}/>
                         <h3 className={props.game.scores[0]==5?"text-success":"text-danger"}>{"Score: "+props.game.scores[0]}</h3>
                     </Col>
                     <Col className="d-flex flex-column justify-content-center align-items-center">
                         <h3>Round 2</h3>
-                        <img src={SERVER_URL+"/api/images/"+props.game.images[1]} alt="Round 2" style={{maxWidth: '25vw', maxHeight: '20vh', height: 'auto', width: 'auto' }} className={props.game.scores[1]==5?"border border-success border-5 p-0" : "border border-danger border-5 p-0"}/>
+                        <img src={SERVER_URL+"/api/images/"+props.game.images[1]} alt="Round 2" className={props.game.scores[1]==5?"border border-success border-5 p-0 image-offcanvas" : "border border-danger border-5 p-0 image-offcanvas"}/>
                         <h3 className={props.game.scores[1]==5?"text-success":"text-danger"}>{"Score: "+props.game.scores[1]}</h3>
                     </Col>
                     <Col className="d-flex flex-column justify-content-center align-items-center">
                         <h3>Round 3</h3>
-                        <img src={SERVER_URL+"/api/images/"+props.game.images[2]} alt="Round 3" style={{maxWidth: '25vw', maxHeight: '20vh', height: 'auto', width: 'auto' }} className={props.game.scores[2]==5?"border border-success border-5 p-0" : "border border-danger border-5 p-0"}/>
+                        <img src={SERVER_URL+"/api/images/"+props.game.images[2]} alt="Round 3" className={props.game.scores[2]==5?"border border-success border-5 p-0 image-offcanvas" : "border border-danger border-5 p-0 image-offcanvas"}/>
                         <h3 className={props.game.scores[2]==5?"text-success":"text-danger"}>{"Score: "+props.game.scores[2]}</h3>
                     </Col>
                 </Row>
@@ -78,7 +78,7 @@ function Details(props) {
 function Profile(props) {
     return (
         <Container className="d-flex flex-column justify-content-center align-items-center">
-            <img src={Propic} alt="Profile" style={{maxWidth: '25vw', maxHeight: '20vh', height: 'auto', width: 'auto' }} />
+            <img src={Propic} alt="Profile" className="propic" />
             <h3>@{props.user.username}</h3>
             <h3>Games played: {props.tot_games}</h3>
             <h3>Correctly guessed memes: {(props.correct_guesses*100).toFixed(2)}%</h3>
@@ -92,38 +92,48 @@ function Profile(props) {
 function PreviousGames(props){
     const [page, setPage] = useState(0);
     return(<>
-        <Table striped bordered hover >
+        <Table striped bordered hover fixed>
             <thead>
                 <tr>
-                    <th className="text-center py-3">Game</th>
-                    <th className="text-center"><i className="bi bi-check-circle-fill fs-3 text-success"></i></th>
-                    <th className="text-center"><i className="bi bi-x-circle-fill fs-3 text-danger"></i></th>
-                    <th className="text-center"><i className="bi bi-award-fill fs-2 text-primary"></i></th>
+                    <th className="text-center align-middle">Game</th>
+                    <th className="text-center align-middle"><i className="bi bi-1-circle-fill fs-3 text-info"></i></th>
+                    <th className="text-center align-middle"><i className="bi bi-2-circle-fill fs-3 text-info"></i></th>
+                    <th className="text-center align-middle"><i className="bi bi-3-circle-fill fs-3 text-info"></i></th>
+                    <th className="text-center align-middle"><i className="bi bi-award-fill fs-2 text-primary"></i></th>
                 </tr>
             </thead>
             <tbody>
                 {props.waiting && Array.from({length: props.maxRows-props.games.slice(page*props.maxRows,(page+1)*props.maxRows).length}).map((_,i)=> (
-                    <tr key={`empty-${i}`}>
-                        <td className="text-center">Loading...</td>
-                        <td className="text-center">‎</td>
-                        <td className="text-center">‎</td>
-                        <td className="text-center">‎</td>
+                    <tr className="empty-row" key={`empty-${i}`}>
+                        <td className="text-center align-middle">Loading...</td>
+                        <td className="column-width-20"></td>
+                        <td className="column-width-20"></td>
+                        <td className="column-width-20"></td>
+                        <td className="column-width-20"></td>
                     </tr>
                 ))}
                 {!props.waiting && props.games.slice(page*props.maxRows,(page+1)*props.maxRows).map(game => (
                     <tr key={game.id} onClick={()=>props.setGameDetails(game)}>
-                        <td className="text-center">{game.id}</td>
-                        <td className="text-center">{game.scores.filter(s=>s==5).length}</td>
-                        <td className="text-center">{game.scores.filter(s=>s==0).length}</td>
-                        <td className="text-center">{game.scores.reduce((a,b)=>a+b)}</td>
+                        <td className="text-center align-middle column-width-20">{game.id}</td>
+                        <td className="text-center align-middle column-width-20">
+                            <img src={SERVER_URL+"/api/images/"+game.images[0]} alt="Round 1" className={game.scores[0]==5?"border border-success border-2 p-0 image-row" : "border border-danger border-2 p-0 image-row"}/>
+                        </td>
+                        <td className="text-center align-middle column-width-20">
+                            <img src={SERVER_URL+"/api/images/"+game.images[1]} alt="Round 2" className={game.scores[1]==5?"border border-success border-2 p-0 image-row" : "border border-danger border-2 p-0 image-row"} />
+                        </td>
+                        <td className="text-center align-middle column-width-20">
+                            <img src={SERVER_URL+"/api/images/"+game.images[2]} alt="Round 3" className={game.scores[2]==5?"border border-success border-2 p-0 image-row" : "border border-danger border-2 p-0 image-row"} />
+                        </td>
+                        <td className="text-center align-middle column-width-20">{game.scores.reduce((a,b)=>a+b)}</td>
                     </tr>
                 ))}
                 {!props.waiting && Array.from({length: props.maxRows-props.games.slice(page*props.maxRows,(page+1)*props.maxRows).length}).map((_,i)=> (
-                    <tr key={`empty-${i}`}>
-                        <td className="text-center">‎</td>
-                        <td className="text-center">‎</td>
-                        <td className="text-center">‎</td>
-                        <td className="text-center">‎</td>
+                    <tr className="empty-row" key={`empty-${i}`}>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr>
                 ))}
             </tbody>

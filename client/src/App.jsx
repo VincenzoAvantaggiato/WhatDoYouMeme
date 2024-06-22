@@ -1,6 +1,6 @@
-import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import './App.css'
 
 import { useState, useEffect } from 'react'
 import Header from './components/Header'
@@ -84,7 +84,7 @@ function App() {
             <Outlet/>
 
             {message && <Row>
-              <Alert variant={message.type} onClose={() => setMessage('')} dismissible className="position-fixed top-0 end-0 w-25 me-1" style={{marginTop:'8vh'}}>{message.msg}</Alert>
+              <Alert variant={message.type} onClose={() => setMessage('')} dismissible className="my-alert" >{message.msg}</Alert>
             </Row> }
             
           </Container>

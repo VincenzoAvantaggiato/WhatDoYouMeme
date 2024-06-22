@@ -86,7 +86,8 @@ function GamePage(props) {
         {round === 0 ? !waiting? <Instructions next={nextRound} loggedIn={props.loggedIn} waiting={waiting} getMemes={getMemes}/> : 
              <Container className='d-flex flex-column align-items-center justify-content-center'><h1>Loading...</h1></Container> :
          round ===-1 ? <Recap loggedIn={props.loggedIn} scores={scores} next={nextRound} selectedAnswers={selectedAnswers} images={memes.map(meme=>meme.image_path)} ></Recap>:
-                       <Round round={round} image={memes[round-1].image_path} captions={memes[round-1].captions} score={scores.reduce((a,b)=>a+b)} next={nextRound} roundOver={roundOver} submitAnswer={submitAnswer} rightCaptions={rightCaptions} selectedAnswer={selectedAnswers[round-1]} waiting={waiting} loggedIn={props.loggedIn}/>}
+                       <Round round={round} image={memes[round-1].image_path} captions={memes[round-1].captions} score={scores.reduce((a,b)=>a+b)} next={nextRound} roundOver={roundOver} submitAnswer={submitAnswer} 
+                              rightCaptions={rightCaptions} selectedAnswer={selectedAnswers[round-1]} waiting={waiting} loggedIn={props.loggedIn} setMessage={props.setMessage}/>}
         </>
     )
 }
@@ -123,7 +124,7 @@ function Recap(props){
                     if (score==0) return;
                     return <Col key={index} className="d-flex flex-column  align-items-center">
                         
-                        <img src={SERVER_URL+"/api/images/"+props.images[index]} alt="Meme" style={{maxWidth: '15vw', maxHeight: '15vh', height: 'auto', width: 'auto' }}/>
+                        <img src={SERVER_URL+"/api/images/"+props.images[index]} alt="Meme" className="image-recap"/>
                         <p className="text-center">{props.selectedAnswers[index].text}</p>
                     </Col>
                 })}
@@ -143,7 +144,7 @@ function Round(props) {
         <>
             <Row className="d-flex h-25 justify-content-start  align-items-end">
                 <Col className="d-flex justify-content-left">
-                    {!props.waiting&&props.roundOver && !props.rightCaptions.includes(props.selectedAnswer.id) && <img src={Loser} alt="Loser" style={{overlay: 'true'}}/>}
+                    {!props.waiting&&props.roundOver && !props.rightCaptions.includes(props.selectedAnswer.id) && <img src={Loser} alt="Loser" />}
                 </Col>
                 <Col>
                     <h1 className="d-flex justify-content-center">Round {props.round}</h1>
@@ -155,7 +156,7 @@ function Round(props) {
             </Row>
             <Row className="m-3 d-flex h-50 justify-content-center align-items-center">
                 <Col className="d-flex justify-content-center align-items-center">
-                    <img src={SERVER_URL+"/api/images/"+props.image} alt="Meme" style={{maxWidth: '45vw', maxHeight: '40vh', height: 'auto', width: 'auto' }}/>
+                    <img src={SERVER_URL+"/api/images/"+props.image} alt="Meme" className="image-round"/>
                 </Col>
                 <Col>
                     {props.captions.map(caption => <Row key={caption.id}><Button key={caption.id} className={!props.roundOver?"btn-light border border-primary border-2 rounded m-2": 
@@ -169,7 +170,7 @@ function Round(props) {
                 </Col>
             </Row>
             <Row className="h-25 d-flex align-items-start">
-            {!props.roundOver && <Timer time={30} submitAnswer={props.submitAnswer} className='footer'/>}
+            {!props.roundOver && <Timer time={30} submitAnswer={props.submitAnswer} setMessage={props.setMessage} className='footer'/>}
             {props.roundOver && 
                 <Container className='d-flex flex-column align-items-center justify-content-center'>
                     {props.waiting? <h1 className="text-warning text-center">Waiting...</h1>:props.rightCaptions.includes(props.selectedAnswer.id)? <h1 className="text-success text-center">Correct!</h1>:<h1 className="text-danger text-center">Wrong!</h1>}
@@ -208,13 +209,14 @@ function Timer(props) {
         }));
         if (time===0) {
             props.submitAnswer({id: undefined, text: 'TIMEOUT'});
+            props.setMessage({msg: 'Time is up!', type: 'danger'});
         }
     }, [time]);
 
     return (
         <Container className='d-flex flex-column align-items-center justify-content-center'>
             <h1 style={{color: `rgb(${color.r}, ${color.g}, ${color.b})`}}>{time}</h1>
-            <Container className="progress" style={{ backgroundColor: 'transparent' }}>
+            <Container className="progress progress-transparent">
                 <Container
                     className="progress-bar progress-bar-striped progress-bar-animated rounded-pill"
                     role="progressbar"
