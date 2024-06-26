@@ -65,7 +65,7 @@
     ```
 - POST `/api/games`
   - Save a new game
-  - Response: `201 Created` (success), `401 Unauthorized` (user is not logged in) or `500 Internal Server Error` (generic error).
+  - Response: `201 Created` (success), `401 Unauthorized` (user is not logged in), `422 Unprocessable Content`(wrong parameters) or `500 Internal Server Error` (generic error).
   - Request body:
     ```
     {
@@ -161,8 +161,8 @@
 
 ## Screenshot
 
-![Screenshot1](./img/screenshot1.jpg)
-![Screenshot2](./img/screenshot2.jpg)
+![Screenshot1](./img/screenshot1.png)
+![Screenshot2](./img/screenshot2.png)
 
 ## Users Credentials
 

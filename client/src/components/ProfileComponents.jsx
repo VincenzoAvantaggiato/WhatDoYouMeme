@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Button, Col, Container, Offcanvas, Pagination, Row, Table } from "react-bootstrap";
+import { Button, Col, Container, Image, Offcanvas, Pagination, Row, Table } from "react-bootstrap";
 import API from "../API";
 import Propic from "../assets/man-user-color-icon.svg";
 import { SERVER_URL } from "../API.mjs";
+import { useNavigate } from "react-router-dom";
 
 function ProfilePage(props) {
     const [games, setGames] = useState([]);
@@ -56,17 +57,17 @@ function Details(props) {
                 <Row className="d-flex justify-content-around align-items-center">
                     <Col className="d-flex flex-column justify-content-center align-items-center">
                         <h3 >Round 1</h3>
-                        <img src={SERVER_URL+"/api/images/"+props.game.images[0]} alt="Round 1" className={props.game.scores[0]==5?"border border-success border-5 p-0 image-offcanvas" : "border border-danger border-5 p-0 image-offcanvas"}/>
+                        <Image src={SERVER_URL+"/api/images/"+props.game.images[0]} alt="Round 1" className={props.game.scores[0]==5?"border border-success border-5 p-0 image-offcanvas" : "border border-danger border-5 p-0 image-offcanvas"}/>
                         <h3 className={props.game.scores[0]==5?"text-success":"text-danger"}>{"Score: "+props.game.scores[0]}</h3>
                     </Col>
                     <Col className="d-flex flex-column justify-content-center align-items-center">
                         <h3>Round 2</h3>
-                        <img src={SERVER_URL+"/api/images/"+props.game.images[1]} alt="Round 2" className={props.game.scores[1]==5?"border border-success border-5 p-0 image-offcanvas" : "border border-danger border-5 p-0 image-offcanvas"}/>
+                        <Image src={SERVER_URL+"/api/images/"+props.game.images[1]} alt="Round 2" className={props.game.scores[1]==5?"border border-success border-5 p-0 image-offcanvas" : "border border-danger border-5 p-0 image-offcanvas"}/>
                         <h3 className={props.game.scores[1]==5?"text-success":"text-danger"}>{"Score: "+props.game.scores[1]}</h3>
                     </Col>
                     <Col className="d-flex flex-column justify-content-center align-items-center">
                         <h3>Round 3</h3>
-                        <img src={SERVER_URL+"/api/images/"+props.game.images[2]} alt="Round 3" className={props.game.scores[2]==5?"border border-success border-5 p-0 image-offcanvas" : "border border-danger border-5 p-0 image-offcanvas"}/>
+                        <Image src={SERVER_URL+"/api/images/"+props.game.images[2]} alt="Round 3" className={props.game.scores[2]==5?"border border-success border-5 p-0 image-offcanvas" : "border border-danger border-5 p-0 image-offcanvas"}/>
                         <h3 className={props.game.scores[2]==5?"text-success":"text-danger"}>{"Score: "+props.game.scores[2]}</h3>
                     </Col>
                 </Row>
@@ -76,9 +77,10 @@ function Details(props) {
 }
 
 function Profile(props) {
+    const navigate = useNavigate();
     return (
         <Container className="d-flex flex-column justify-content-center align-items-center">
-            <img src={Propic} alt="Profile" className="propic" />
+            <Image src={Propic} alt="Profile" className="propic" />
             <h3>@{props.user.username}</h3>
             <h3>Games played: {props.tot_games}</h3>
             <h3>Correctly guessed memes: {(props.correct_guesses*100).toFixed(2)}%</h3>
@@ -92,7 +94,7 @@ function Profile(props) {
 function PreviousGames(props){
     const [page, setPage] = useState(0);
     return(<>
-        <Table striped bordered hover fixed>
+        <Table striped bordered hover>
             <thead>
                 <tr>
                     <th className="text-center align-middle">Game</th>
@@ -116,13 +118,25 @@ function PreviousGames(props){
                     <tr key={game.id} onClick={()=>props.setGameDetails(game)}>
                         <td className="text-center align-middle column-width-20">{game.id}</td>
                         <td className="text-center align-middle column-width-20">
-                            <img src={SERVER_URL+"/api/images/"+game.images[0]} alt="Round 1" className={game.scores[0]==5?"border border-success border-2 p-0 image-row" : "border border-danger border-2 p-0 image-row"}/>
+                            <div className="image-container">
+                                <Image src={SERVER_URL+"/api/images/"+game.images[0]} alt="Round 1" className={game.scores[0]==5?"border border-success border-2 p-0 image-row" : "border border-danger border-2 p-0 image-row"}/>
+                                <div className="overlay"></div>
+                                <div className="image-score">{game.scores[0]}</div>
+                            </div>
                         </td>
                         <td className="text-center align-middle column-width-20">
-                            <img src={SERVER_URL+"/api/images/"+game.images[1]} alt="Round 2" className={game.scores[1]==5?"border border-success border-2 p-0 image-row" : "border border-danger border-2 p-0 image-row"} />
+                            <div className="image-container">
+                                <Image src={SERVER_URL+"/api/images/"+game.images[1]} alt="Round 2" className={game.scores[1]==5?"border border-success border-2 p-0 image-row" : "border border-danger border-2 p-0 image-row"} />
+                                <div className="overlay"></div>
+                                <div className="image-score">{game.scores[1]}</div>
+                            </div>
                         </td>
                         <td className="text-center align-middle column-width-20">
-                            <img src={SERVER_URL+"/api/images/"+game.images[2]} alt="Round 3" className={game.scores[2]==5?"border border-success border-2 p-0 image-row" : "border border-danger border-2 p-0 image-row"} />
+                            <div className="image-container">
+                                <Image src={SERVER_URL+"/api/images/"+game.images[2]} alt="Round 3" className={game.scores[2]==5?"border border-success border-2 p-0 image-row" : "border border-danger border-2 p-0 image-row"} />
+                                <div className="overlay"></div>
+                                <div className="image-score">{game.scores[2]}</div>
+                            </div>
                         </td>
                         <td className="text-center align-middle column-width-20">{game.scores.reduce((a,b)=>a+b)}</td>
                     </tr>
@@ -139,7 +153,7 @@ function PreviousGames(props){
             </tbody>
         </Table>
         <Container className="d-flex align-items-center justify-content-center">
-            {//(numPages > 1) &&
+            {
                     <Pagination>
                         <Pagination.Prev onClick={() => setPage(page - 1)} disabled={page === 0} />
                         {[...Array(props.numPages).keys()].map((i) => (

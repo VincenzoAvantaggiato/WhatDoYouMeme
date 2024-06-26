@@ -9,6 +9,7 @@ import MemeDAO from './dao/meme_dao.mjs';
 import UserDAO from './dao/user_dao.mjs';
 import GameDao from './dao/game_dao.mjs';
 import {Game} from './Meme.mjs';
+import { body, validationResult } from 'express-validator';
 
 // init express
 const app = new express();
@@ -28,6 +29,13 @@ const corsOptions = {
   credentials: true
 };
 app.use(cors(corsOptions));
+
+const validateRequest = (req, res, next) => {
+  const errors = validationResult(req);
+  if(errors.isEmpty())
+    return next();
+  return res.status(422).json({errors: errors.array()});
+}
 
 app.use('/api/images', express.static('public/images'));
 
@@ -132,7 +140,12 @@ app.delete('/api/sessions/current', (req, res) => {
   }, TIMEOUT);
 });
 
-app.post('/api/games',isLoggedIn, (req, res) => {
+app.post('/api/games', isLoggedIn,
+  body('scores').isArray({min: 3, max: 3}).withMessage('Scores must be an array of 3 elements'),
+  body('images').isArray({min: 3, max: 3}).withMessage('Images must be an array of 3 elements'),
+  body('scores.*').isIn([0,5]).withMessage('Scores must be 0 or 5'),
+  validateRequest,
+  (req, res) => {
   setTimeout(() => {
     const game = new Game(-1,req.user.id, req.body.scores, req.body.images);
     gameDao.addGame(game).then(id => {
@@ -144,7 +157,8 @@ app.post('/api/games',isLoggedIn, (req, res) => {
   }, TIMEOUT);
 });
 
-app.get('/api/games',isLoggedIn, (req, res) => {
+app.get('/api/games', isLoggedIn,
+  (req, res) => {
   setTimeout(() => {
     gameDao.getGamesByUser(req.user.id).then(games => {
     res.json(games);

@@ -1,4 +1,4 @@
-import {Container, Navbar, Button, Dropdown} from 'react-bootstrap';
+import {Container, Navbar, Button, Dropdown, Image} from 'react-bootstrap';
 import TrollFace from '../assets/Troll-Face.svg';
 import {Link, useLocation, useNavigate} from 'react-router-dom';
 
@@ -10,7 +10,7 @@ function Header(props) {
         <Navbar bg='primary' data-bs-theme='dark' className='fixed-top'>
             <Container fluid>
                 <Link className="navbar-brand d-flex align-items-center" to='/'>
-                    <img
+                    <Image
                     src={TrollFace}
                     width="30"
                     height="30"

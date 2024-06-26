@@ -1,2 +1,14 @@
 GET http://localhost:3001/api/memes/random HTTP/1.1
 ###
+POST http://localhost:3001/api/games HTTP/1.1
+Content-Type: application/json
+
+{
+    "scores": [0,0,5],
+    "images": [
+    "meme9.jpg",
+    "meme10.jpg",
+    "meme2.jpg"
+    ]
+}
+###

@@ -1,4 +1,4 @@
-import { Button, Container, Row, Col } from "react-bootstrap";
+import { Button, Container, Row, Col, Image } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import API from "../API";
@@ -119,16 +119,15 @@ function Recap(props){
             </>}
             <br></br>
             {props.scores.filter(s=>s==5).length>0 && <h4>Memes that you correctly guessed:</h4>}
-            <Row>
+            <Container className="d-flex flex-row">
                 {props.loggedIn && props.scores.map((score, index) => {
                     if (score==0) return;
-                    return <Col key={index} className="d-flex flex-column  align-items-center">
-                        
-                        <img src={SERVER_URL+"/api/images/"+props.images[index]} alt="Meme" className="image-recap"/>
+                    return <Container key={index} className="d-flex flex-column  align-items-center">
+                        <Image src={SERVER_URL+"/api/images/"+props.images[index]} alt="Meme" className="image-recap"/>
                         <p className="text-center">{props.selectedAnswers[index].text}</p>
-                    </Col>
+                    </Container>
                 })}
-            </Row>
+            </Container>
             <br></br>
             <Container className="d-flex flex-row align-items-center justify-content-center">
                 <Link to='/' className='btn btn-primary bi bi-house mx-1'> Home</Link>
@@ -156,7 +155,7 @@ function Round(props) {
             </Row>
             <Row className="m-3 d-flex h-50 justify-content-center align-items-center">
                 <Col className="d-flex justify-content-center align-items-center">
-                    <img src={SERVER_URL+"/api/images/"+props.image} alt="Meme" className="image-round"/>
+                    <Image src={SERVER_URL+"/api/images/"+props.image} alt="Meme" className="image-round"/>
                 </Col>
                 <Col>
                     {props.captions.map(caption => <Row key={caption.id}><Button key={caption.id} className={!props.roundOver?"btn-light border border-primary border-2 rounded m-2": 
