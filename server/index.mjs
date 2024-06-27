@@ -34,7 +34,7 @@ const validateRequest = (req, res, next) => {
   const errors = validationResult(req);
   if(errors.isEmpty())
     return next();
-  return res.status(422).json({errors: errors.array()});
+  return res.status(422).json({message: 'Validation error', errors: errors.array()});
 }
 
 app.use('/api/images', express.static('public/images'));
